@@ -1,5 +1,6 @@
 import {
-    View, TextInput, StyleSheet
+    View, TextInput, StyleSheet,
+    Alert
 } from 'react-native'
 import { router } from 'expo-router'
 import { collection, addDoc, Timestamp } from 'firebase/firestore'
@@ -22,8 +23,8 @@ const handlePress = (bodyText: string): void => {
             console.log('success', docRef.id)
             router.back()
         })
-        .catch((error) => {
-            console.log(error)
+        .catch(() => {
+            Alert.alert('新規登録に失敗しました')
         })
 }
 //⇩同じかきかた
