@@ -1,22 +1,57 @@
 import {
-    View, TextInput, StyleSheet, KeyboardAvoidingView
+    View, TextInput, StyleSheet
 } from 'react-native'
+import { router } from 'expo-router'
+import { collection, addDoc, Timestamp } from 'firebase/firestore'
+import { useState } from 'react'
 
 import CircleButton from '../../components/CircleButton'
 import Icon from '../../components/icon'
-import { router } from 'expo-router'
+import { db, auth } from '../../config'
+import KeyboardAvoidingView from '../../components/KeyboardAvoidingView'
 
-const handlePress = (): void => {
-    router.back()
+
+const handlePress = (bodyText: string): void => {
+    if(auth.currentUser === null) { return }
+    const ref = collection(db, `users/${auth.currentUser.uid}/memos`)
+    addDoc(ref, {
+        bodyText,
+        updatedAt: Timestamp.fromDate(new Date())
+    })
+        .then((docRef) => {
+            console.log('success', docRef.id)
+            router.back()
+        })
+        .catch((error) => {
+            console.log(error)
+        })
 }
+//⇩同じかきかた
+//以下は上記と同じ動作だが、コールバックの入れ子を避ける事が出来る
+//thenのなかで入れ異なり階層が深くなると見にくいコードになるが、async awaitを使えば見やすいコードになる
+// const handlePress = async (): void => {
+//     await addDoc(collection(db, 'memos'), {
+//         bodyText: 'test2'
+//     }).catch((error) => {
+//         console.log(error)
+//     })
+//     router.back()
+// }
 
 const Create = (): JSX.Element => {
+    const [bodyText, setBodyText] = useState ('')
     return (
-        <KeyboardAvoidingView behavior='height' style={styles.container}>
+        <KeyboardAvoidingView style={styles.container}>
             <View style={styles.inputContainer}>
-                <TextInput multiline style={styles.input} value=''/>
+                <TextInput
+                    multiline
+                    style={styles.input}
+                    value={bodyText}
+                    onChangeText={(text) => { setBodyText(text) }}
+                    autoFocus
+                />
             </View>
-            <CircleButton onPress={handlePress}>
+            <CircleButton onPress={() => { handlePress(bodyText) }} >
                 <Icon name='check' size={40} color='#ffffff' />
             </CircleButton>
         </KeyboardAvoidingView>

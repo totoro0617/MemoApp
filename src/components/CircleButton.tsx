@@ -1,5 +1,5 @@
 import {
-    View, Text, StyleSheet, TouchableOpacity,
+    Text, StyleSheet, TouchableOpacity,
     type ViewStyle
 } from "react-native"
 
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         position: 'absolute',
         right: 40,
-        bottom: 40,
+        bottom: 80,
         shadowColor: '#000000',
         shadowOpacity: 0.25,
         shadowRadius: 8,
